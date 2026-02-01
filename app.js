@@ -21,7 +21,7 @@ const ui = {
 function init() {
     renderTabs();
     loadFile(state.activeFile);
-    log('MULTIX Code Environment initialized.', 'sys');
+    log('MULTIX Development Terminal Environment initialized.', 'sys');
     log('Ready to connect via WebUSB.', 'info');
     
     // Події
