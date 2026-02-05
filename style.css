@@ -4,11 +4,18 @@
   і весь дизайн миттєво змінюється.
 */
 :root {
-    --bg-dark: #1e1e1e;       /* Фон редактора */
-    --bg-panel: #252526;      /* Фон панелей */
-    --text-main: #d4d4d4;     /* Основний текст */
-    --accent: #007acc;        /* Колір акценту (синій) */
-    --border: #3e3e42;        /* Колір рамок */
+    /* ВИКОРИСТАННЯ СИСТЕМНИХ КОЛЬОРІВ CHROME OS 
+       Замість hex-кодів (#ffffff) ми беремо системні значення.
+       Якщо ви зміните тему ChromeOS на рожеву, кнопки стануть рожевими автоматично.
+    */
+    --bg-app: Canvas;            /* Системний фон (Білий/Світло-сірий) */
+    --text-main: CanvasText;     /* Системний текст (Чорний/Темно-сірий) */
+    --accent: AccentColor;       /* Системний акцент (Синій/Фіолетовий/Тощо) */
+    
+    /* Додаткові відтінки робимо напівпрозорими від системного тексту */
+    --border: rgba(0, 0, 0, 0.1); 
+    --bg-panel: rgba(0, 0, 0, 0.03); /* Ледь помітний сірий для панелей */
+    --text-muted: graytext;      /* Системний колір неактивного тексту */
     
     /* Розміри. Виносимо їх в змінні, щоб легко міняти масштаб */
     --sidebar-w: 50px;
@@ -24,9 +31,9 @@
 body {
     height: 100vh; /* 100% від Viewport Height (висоти видимого екрану) */
     display: flex; /* Вмикаємо Flexbox. Елементи стають в рядок. */
-    background: var(--bg-dark);
+    background: var(--bg-app);
     color: var(--text-main);
-    font-family: 'Segoe UI', sans-serif; /* Шрифт інтерфейсу */
+    font-family: system-ui, -apple-system, sans-serif; /* Шрифт інтерфейсу */
     overflow: hidden; /* Забороняємо прокрутку всієї сторінки (у нас свій скрол в редакторі) */
 }
 
@@ -41,13 +48,17 @@ body {
 
 .nav-btn {
     width: 36px; height: 36px;
-    background: none; border: none; color: #858585;
-    cursor: pointer; /* Курсор стає "рукою" */
+    background: none; border: none; 
+    color: var(--text-muted);
+    cursor: pointer; 
     margin-bottom: 5px;
+    border-radius: 6px; /* Трохи заокруглені кути в стилі ChromeOS */
+    font-weight: bold;
 }
 /* :hover — псевдоклас. Спрацьовує, коли миша наводиться на елемент */
-.nav-btn:hover { color: white; }
-.nav-btn.active { border-left: 2px solid var(--accent); color: white; }
+.nav-btn:hover { background: rgba(0,0,0,0.05); color: var(--text-main); }
+/* Активна кнопка бере колір акценту ОС */
+.nav-btn.active { background: var(--border); color: var(--accent); }
 
 /* Основна область */
 #workspace {
@@ -55,20 +66,22 @@ body {
     display: flex; flex-direction: column; /* Елементи стають в стовпчик (вкладки, редактор, консоль) */
 }
 
-/* Редактор */
-#editor-wrapper {
-    flex: 1; /* Редактор розтягується, щоб зайняти все місце між вкладками і консоллю */
-    display: flex; /* Щоб поставити номери рядків і текст поруч */
-    position: relative;
+#tabs-bar {
+    height: 40px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 10px; background: var(--bg-app);
 }
 
-#line-numbers {
-    width: 40px;
-    text-align: right; padding: 10px 5px;
-    color: #858585; background: var(--bg-dark);
-    border-right: 1px solid var(--border);
-    font-family: 'Consolas', monospace; /* Моноширинний шрифт для коду */
-    line-height: 1.5; /* Міжрядковий інтервал */
+#btn-mode {
+    border: 1px solid var(--border); background: transparent;
+    padding: 4px 12px; border-radius: 4px; cursor: pointer;
+    font-size: 13px; color: var(--text-main);
+}
+#btn-mode:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Редактор */
+#editor-container {
+    flex: 1; position: relative;
 }
 
 #code-editor {
@@ -81,13 +94,49 @@ body {
     white-space: pre; /* Зберігає всі пробіли і відступи як є */
 }
 
+#code-editor {
+    width: 100%; height: 100%;
+    border: none; resize: none; outline: none;
+    padding: 20px; /* Більше повітря, бо немає номерів рядків */
+    background: transparent;
+    color: var(--text-main);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 15px; /* Трохи більший шрифт для комфорту очей */
+    line-height: 1.6;
+}
+/* Стиль виділення тексту (коли ми підсвічуємо помилку) */
+::selection {
+    background: var(--accent);
+    color: white;
+}
+
 /* Консоль */
 #console-panel {
-    height: 150px; /* Фіксована висота */
+    height: 150px;
     border-top: 1px solid var(--border);
     background: var(--bg-panel);
-    font-size: 12px;
+    display: flex; flex-direction: column;
 }
+
+.console-header {
+    padding: 5px 10px; border-bottom: 1px solid var(--border);
+    font-size: 11px; text-transform: uppercase; color: var(--text-muted);
+    display: flex; justify-content: space-between;
+}
+
 #console-output {
-    padding: 5px; font-family: monospace; color: #aaa;
+    flex: 1; overflow-y: auto; padding: 10px; 
+    font-family: monospace; font-size: 13px;
 }
+
+/* Стилі повідомлень в консолі */
+.log-item { margin-bottom: 4px; padding: 2px 0; border-bottom: 1px solid transparent; }
+.log-err { color: #d32f2f; /* Червоний для помилок завжди стандартний */ }
+.log-sys { color: var(--accent); }
+
+/* Посилання на помилку */
+.err-link {
+    text-decoration: underline; cursor: pointer; font-weight: bold;
+    margin-left: 5px;
+}
+.err-link:hover { background: rgba(211, 47, 47, 0.1); }
