@@ -1,6 +1,6 @@
 {
-  "name": "MULTIX Terminal",
-  "short_name": "Terminal",
+  "name": "MULTIX Code",
+  "short_name": "Code",
   "start_url": "/",
   "display": "standalone", /* Прибирає адресний рядок браузера, виглядає як нативна програма */
   "background_color": "#1e1e1e",
