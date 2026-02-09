@@ -151,8 +151,8 @@ async function connectDevice() {
         log("Interface claimed. Ready to talk to K1 Mask ROM.", "sys");
         
         // Оновлюємо статус в UI
-        document.getElementById('status-indicator').classList.add('connected');
-        document.getElementById('status-indicator').title = "Milk-V Jupiter Connected";
+        //document.getElementById('status-indicator').classList.add('connected');
+        //document.getElementById('status-indicator').title = "Milk-V Jupiter Connected";
 
     } catch (err) {
         logError(`Connection failed: ${err.message}`);
